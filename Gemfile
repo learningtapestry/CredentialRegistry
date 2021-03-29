@@ -27,6 +27,7 @@ gem 'pg', '~> 1.2', platform: :mri
 gem 'redis', '~> 4.3'
 gem 'redis-activesupport', '~> 5.2'
 gem 'standalone_migrations', '~> 6.0'
+gem 'with_advisory_lock', '~> 4.6'
 
 # Versioning
 gem 'paper_trail', '~> 10.3'
