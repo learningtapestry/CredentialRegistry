@@ -8,6 +8,7 @@ class CreateIndexedEnvelopeResources < ActiveRecord::Migration[5.2]
       t.string :'search:recordOwnedBy'
       t.string :'search:recordPublishedBy'
       t.datetime :'search:recordUpdated', null: false
+      t.string :'search:resourcePublishType'
       t.references :envelope_community,
                    foreign_key: { on_delete: :cascade },
                    index: false,
@@ -32,7 +33,7 @@ class CreateIndexedEnvelopeResources < ActiveRecord::Migration[5.2]
                     on_delete: :nullify,
                     primary_key: :_ctid
 
-      t.index :'@id', name: 'i_ctdl_id', unique: true
+      t.index %i[envelope_community_id @id], name: 'i_ctdl_id', unique: true
       t.index :'@id',
               name: 'i_ctdl_id_trgm',
               opclass: { :'@id' => :gin_trgm_ops },
@@ -55,6 +56,30 @@ class CreateIndexedEnvelopeResources < ActiveRecord::Migration[5.2]
       t.index :'search:recordUpdated',
               name: 'i_ctdl_search_recordUpdated_desc',
               order: { 'search:recordUpdated': :desc }
+      t.index :'search:resourcePublishType', name: 'i_ctdl_search_resourcePublishType'
+    end
+
+    create_table :indexed_envelope_resource_references do |t|
+      t.string :path, null: false
+
+      t.references :resource,
+                   foreign_key: {
+                     on_delete: :cascade,
+                     to_table: :indexed_envelope_resources
+                   },
+                   index: false,
+                   null: false
+
+      t.string :resource_uri, null: false
+      t.string :subresource_uri, null: false
+
+      t.index %i[path resource_id resource_uri subresource_uri],
+              name: 'index_indexed_envelope_resource_references',
+              unique: true
+
+      t.index :subresource_uri,
+              opclass: { subresource_uri: :gin_trgm_ops },
+              using: :gin
     end
   end
 end
