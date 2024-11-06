@@ -39,7 +39,12 @@ services:
   app:
     image: credentialregistry-app:latest-airgapped-v6
     command: bash -c "bundle install && bin/rackup -o 0.0.0.0"
-    env_file:
+    environment:
+      - POSTGRESQL_ADDRESS=db
+      - POSTGRESQL_DATABASE=cr_development
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=postgres
+      - REDIS_URL=redis://redis:6379/1
     volumes:
       - bundle:/usr/local/bundle
     ports:
@@ -49,7 +54,6 @@ services:
       - redis
     security_opt:
       - seccomp:unconfined
-
 volumes:
   bundle:
   postgres:
