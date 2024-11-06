@@ -1,5 +1,9 @@
 # Deploy air-gapped registry application
 
+## Tech notes
+### SELinux
+The sandbox environment uses the SElinux mode "enforcing", and it does not need to mount "/app" directory using the label ":z" or ":Z".  Instead of we use label "/app:z" the application container returns "Could not locate Gemfile" which indicates that the application is not able to access the "/app" directory for reading.
+
 ## Pre-requisites
 
 ## Instructions
@@ -36,9 +40,7 @@ services:
     image: credentialregistry-app:latest-airgapped-v6
     command: bash -c "bundle install && bin/rackup -o 0.0.0.0"
     env_file:
-#      - .env.docker
     volumes:
-      - .:/app:z
       - bundle:/usr/local/bundle
     ports:
       - 9292:9292
