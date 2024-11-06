@@ -3,7 +3,13 @@
 ## Pre-requisites
 
 ## Instructions
-1. Retrieve bundles
+1. Log in and create root directory
+```
+mkdir CredentialRegistry
+cd CredentialRegistry
+``` 
+  
+4. Retrieve bundles
 ```
 curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v2.tar.gz -o credregapp-bundle-v2.tar.gz
 curl https://credregbundle.s3-accelerate.amazonaws.com/credentialregistry-app-latest-airgapped-v6.tar -o credentialregistry-app-latest-airgapped-v6.tar
@@ -30,7 +36,7 @@ services:
     image: credentialregistry-app:latest-airgapped-v6
     command: bash -c "bundle install && bin/rackup -o 0.0.0.0"
     env_file:
-      - .env.docker
+#      - .env.docker
     volumes:
       - .:/app:z
       - bundle:/usr/local/bundle
@@ -47,4 +53,6 @@ volumes:
   postgres:
   rails_cache:
 ```
-3. 
+3. Untar bundle file
+4. docker load -i [docker images]
+5. 
