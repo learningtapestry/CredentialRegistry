@@ -13,12 +13,12 @@ mkdir CredentialRegistry
 cd CredentialRegistry
 ``` 
   
-4. Retrieve bundles
+2. Retrieve bundles
 ```
 curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v2.tar.gz -o credregapp-bundle-v2.tar.gz
 curl https://credregbundle.s3-accelerate.amazonaws.com/credentialregistry-app-latest-airgapped-v6.tar -o credentialregistry-app-latest-airgapped-v6.tar
 ```
-2. Create docker-compose.yml file:
+3. Create docker-compose.yml file:
 ```
 version: '3'
 services:
@@ -55,6 +55,6 @@ volumes:
   postgres:
   rails_cache:
 ```
-3. Untar bundle file
-4. docker load -i [docker images]
-5. 
+4. Untar bundle file
+5. docker load -i [docker images]
+
