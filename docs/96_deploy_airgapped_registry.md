@@ -4,10 +4,10 @@
 
 ## Instructions
 1. Retrieve bundles
-
+```
 curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v2.tar.gz -o credregapp-bundle-v2.tar.gz
-curl  https://credregbundle.s3-accelerate.amazonaws.com/credentialregistry-app-latest-airgapped-v6.tar -o credentialregistry-app-latest-airgapped-v6.tar
-
+curl https://credregbundle.s3-accelerate.amazonaws.com/credentialregistry-app-latest-airgapped-v6.tar -o credentialregistry-app-latest-airgapped-v6.tar
+```
 2. Create docker-compose.yml file:
 ```
 version: '3'
