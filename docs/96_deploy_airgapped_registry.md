@@ -35,7 +35,7 @@ $ cat credregapp-bundle-v3.tar.gz.sha256
 ```
 4. Uncompress the main bundle
 ```
-tar xvzf credregapp-bundle.tar.gz
+tar xvzf credregapp-bundle-v3.tar.gz
 ```
 5. Load docker images:
 ```
