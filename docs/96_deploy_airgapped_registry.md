@@ -1,10 +1,17 @@
-# Deploy air-gapped registry application
-
-## Tech notes
-### SELinux
-The sandbox environment uses the SElinux mode "enforcing", and it does not need to mount "/app" directory using the label ":z" or ":Z".  Instead of we use label "/app:z" the application container returns "Could not locate Gemfile" which indicates that the application is not able to access the "/app" directory for reading.
+# Deploy air-gapped registry application bundle
+## Introduction
+This document provides instructions on how to deploy the registry application bundle on a Linux RHEL environment without necessity of retrieving any dependency from public internet repositories.  This bundle is comprised of:
+1. A main file which contains three container images:
+  a. Registry application
+  b. Postgres server
+  c. Redis server
+2. A `docker-compose.yml` file which orchestrates deployment and configuration of the above container images
+3. A checksum verification file that validates the integrity of the main file.
 
 ## Pre-requisites
+1. Red Hat Linux server release 9.x
+2. Docker engine and Docker compose installed on the above mentioned server (although Podman might be a replacement of the Docker package for Red Hat Linux we cannot guarantee that it works correctlys, so we strongly suggests to use Docker engine)
+3. 
 
 ## Instructions
 1. Log in and create root directory
@@ -63,3 +70,6 @@ volumes:
 4. Untar bundle file
 5. docker load -i [docker images]
 
+## Tech notes
+### SELinux
+The sandbox environment uses the SElinux mode "enforcing", and it does not need to mount "/app" directory using the label ":z" or ":Z".  Instead of we use label "/app:z" the application container returns "Could not locate Gemfile" which indicates that the application is not able to access the "/app" directory for reading.
