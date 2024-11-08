@@ -38,7 +38,7 @@ $ curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v3.ta
 $ sha256sum credregapp-bundle-v3.tar.gz
 $ cat credregapp-bundle-v3.tar.gz.sha256
 
-... then compare both values, they must match.
+... then compare both values, they must match e7c502f9bffa362ad6523bcd1ad55e95d5cfae9a5bb843fc5ad1694df9d9361b
 
 ```
 4. Uncompress the main bundle
@@ -54,7 +54,7 @@ tar xvzf credregapp-bundle-v3.tar.gz
 version: '3'
 services:
   db:
-    image: postgres:16.4
+    image: postgres:13-alpine
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:
