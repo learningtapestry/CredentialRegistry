@@ -12,6 +12,13 @@ This document provides instructions on how to deploy the registry application bu
 1. Red Hat Linux server release 9.x
 2. Docker engine and Docker compose installed on the above mentioned server
    Note: although Podman might be a replacement of the Docker package for Red Hat Linux we cannot guarantee that it works correctly, so we strongly suggests to use Docker engine instead.
+   Hints:
+   ```
+   sudo dnf config-manager --add-repo=https://download.docker.com/linux/rhel/docker-ce.repo
+   sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+   sudo systemctl enable docker
+   sudo systemctl start docker
+   ```   
    
 
 ## Instructions
