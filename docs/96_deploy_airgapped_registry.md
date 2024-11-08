@@ -10,27 +10,43 @@ This document provides instructions on how to deploy the registry application bu
 
 ## Pre-requisites
 1. Red Hat Linux server release 9.x
-2. Docker engine and Docker compose installed on the above mentioned server (although Podman might be a replacement of the Docker package for Red Hat Linux we cannot guarantee that it works correctlys, so we strongly suggests to use Docker engine)
-3. 
+2. Docker engine and Docker compose installed on the above mentioned server
+   Note: although Podman might be a replacement of the Docker package for Red Hat Linux we cannot guarantee that it works correctly, so we strongly suggests to use Docker engine instead.
+   
 
 ## Instructions
-1. Log in and create root directory
+1. Log in and create application's root directory
 ```
 mkdir CredentialRegistry
 cd CredentialRegistry
 ``` 
-  
-2. Retrieve bundles
+2. Retrieve the checksum validation file
 ```
-curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v2.tar.gz -o credregapp-bundle-v2.tar.gz
-curl https://credregbundle.s3-accelerate.amazonaws.com/credentialregistry-app-latest-airgapped-v6.tar -o credentialregistry-app-latest-airgapped-v6.tar
+curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v3.tar.gz.sha256 -o credregapp-bundle-v3.tar.gz.sha256
 ```
-3. Create docker-compose.yml file:
+3. Retrieve and validate main bundle integrity
+```
+$ curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v3.tar.gz -o credregapp-bundle-v3.tar.gz
+$ sha256 credregapp-bundle-v3.tar.gz
+$ cat credregapp-bundle-v3.tar.gz.sha256
+
+... then compare both values, they must match.
+
+```
+4. Uncompress the main bundle
+```
+tar xvzf credregapp-bundle.tar.gz
+```
+5. Load docker images:
+```
+   docker load -i [docker images]
+```
+6. Create docker-compose.yml file:
 ```
 version: '3'
 services:
   db:
-    image: postgres:13.2-alpine
+    image: postgres:16.4
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:
@@ -39,12 +55,12 @@ services:
       - postgres:/var/lib/postgresql/data
 
   redis:
-    image: redis:5.0.5-alpine
+    image: redis:7.4.1
     expose:
       - 6379
 
   app:
-    image: credentialregistry-app:latest-airgapped-v6
+    image: credentialregistry-app:latest-airgapped
     command: bash -c "bundle install && bin/rake db:create db:migrate && bin/rackup -o 0.0.0.0"
     environment:
       - POSTGRESQL_ADDRESS=db
@@ -67,8 +83,6 @@ volumes:
   postgres:
   rails_cache:
 ```
-4. Untar bundle file
-5. docker load -i [docker images]
 
 ## Tech notes
 ### SELinux
