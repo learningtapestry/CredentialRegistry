@@ -34,9 +34,9 @@ curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v3.tar.
 ```
 3. Retrieve and validate main bundle integrity
 ```
-$ curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v3.tar.gz -o credregapp-bundle-v3.tar.gz
-$ sha256sum credregapp-bundle-v3.tar.gz
-$ cat credregapp-bundle-v3.tar.gz.sha256
+curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v3.tar.gz -o credregapp-bundle-v3.tar.gz
+sha256sum credregapp-bundle-v3.tar.gz
+cat credregapp-bundle-v3.tar.gz.sha256
 
 ... then compare both values, they must match e7c502f9bffa362ad6523bcd1ad55e95d5cfae9a5bb843fc5ad1694df9d9361b
 
