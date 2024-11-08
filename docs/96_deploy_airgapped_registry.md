@@ -18,6 +18,7 @@ This document provides instructions on how to deploy the registry application bu
    sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
    sudo systemctl enable docker
    sudo systemctl start docker
+   sudo usermod -G docker [your linux user]
    ```   
    
 
