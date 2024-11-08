@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y lsb-release
 RUN curl -Ss https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
     && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list \
     && apt-get update -qqy \
-    && apt-get install -y --no-install-recommends postgresql-client-13
+    && apt-get install -y --no-install-recommends postgresql-client-16
 
 COPY Gemfile Gemfile.lock ./
 
