@@ -54,7 +54,7 @@ tar xvzf credregapp-bundle-v3.tar.gz
 version: '3'
 services:
   db:
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:
@@ -77,6 +77,7 @@ services:
       - POSTGRESQL_PASSWORD=postgres
       - REDIS_URL=redis://redis:6379/1
       - RACK_ENV=production
+      - DOCKER_ENV=true
     volumes:
       - bundle:/usr/local/bundle
     ports:
