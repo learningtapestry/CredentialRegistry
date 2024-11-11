@@ -69,13 +69,14 @@ services:
 
   app:
     image: credentialregistry-app:latest-airgapped
-    command: bash -c "bundle install && bin/rake db:create db:migrate && bin/rackup -o 0.0.0.0"
+    command: bash -c "bin/rake db:create db:migrate && bin/rackup -o 0.0.0.0"
     environment:
       - POSTGRESQL_ADDRESS=db
       - POSTGRESQL_DATABASE=cr_development
       - POSTGRESQL_USERNAME=postgres
       - POSTGRESQL_PASSWORD=postgres
       - REDIS_URL=redis://redis:6379/1
+      - RACK_ENV=production
     volumes:
       - bundle:/usr/local/bundle
     ports:
