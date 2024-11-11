@@ -2,9 +2,9 @@
 ## Introduction
 This document provides instructions on how to deploy the registry application bundle on a Linux RHEL environment without necessity of retrieving any dependency from public internet repositories.  This bundle is comprised of:
 1. A main file which contains three container images:  
-  a. Registry application
-  b. Postgres server
-  c. Redis server
+  a. Registry application  
+  b. Postgres server  
+  c. Redis server  
 2. A `docker-compose.yml` file which orchestrates deployment and configuration of the above container images
 3. A checksum verification file that validates the integrity of the main file.
 
