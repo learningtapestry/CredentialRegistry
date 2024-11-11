@@ -40,7 +40,7 @@ curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v3.tar.
 sha256sum credregapp-bundle-v3.tar.gz
 cat credregapp-bundle-v3.tar.gz.sha256
 
-... then compare both values, they must match 59e2589b8c474983e22f5d4281fc92b57a710be006549054e8f5bb69d46e3fc8
+... then compare both values, they must match 4da3404df153d1087c7d7eb7f51d6bc2a194fec7c9e4f4855fcad27e85190be5
 
 ```
 4. Uncompress the main bundle
