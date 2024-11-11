@@ -1,7 +1,7 @@
 # Deploy air-gapped registry application bundle
 ## Introduction
 This document provides instructions on how to deploy the registry application bundle on a Linux RHEL environment without necessity of retrieving any dependency from public internet repositories.  This bundle is comprised of:
-1. A main file which contains three container images:
+1. A main file which contains three container images:  
   a. Registry application
   b. Postgres server
   c. Redis server
