@@ -1,12 +1,14 @@
 # Deploy air-gapped registry application bundle
 ## Introduction
 This document provides instructions on how to deploy the registry application bundle on a Linux RHEL environment without necessity of retrieving any dependency from public internet repositories.  This bundle is comprised of:
-1. A main file which contains three container images:
-  a. Registry application
-  b. Postgres server
-  c. Redis server
+1. A main file which contains three container images:  
+  a. Registry application  
+  b. Postgres server  
+  c. Redis server  
 2. A `docker-compose.yml` file which orchestrates deployment and configuration of the above container images
 3. A checksum verification file that validates the integrity of the main file.
+
+**IMPORTANT NOTE: this deployment is designed for use in development and proof of concept stages only**.  It is not intended for deployment in a production environment. For deployment to a production environment, consider implementing best practices for containerized applications, which include secure handling of secrets, implementing scaling and orchestration solutions (such as Kubernetes), and setting up comprehensive monitoring and logging systems.
 
 ## Pre-requisites
 1. Red Hat Linux server release 9.x
@@ -38,7 +40,7 @@ curl https://credregbundle.s3-accelerate.amazonaws.com/credregapp-bundle-v3.tar.
 sha256sum credregapp-bundle-v3.tar.gz
 cat credregapp-bundle-v3.tar.gz.sha256
 
-... then compare both values, they must match e7c502f9bffa362ad6523bcd1ad55e95d5cfae9a5bb843fc5ad1694df9d9361b
+... then compare both values, they must match 4da3404df153d1087c7d7eb7f51d6bc2a194fec7c9e4f4855fcad27e85190be5
 
 ```
 4. Uncompress the main bundle
@@ -54,7 +56,7 @@ tar xvzf credregapp-bundle-v3.tar.gz
 version: '3'
 services:
   db:
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:
@@ -77,6 +79,7 @@ services:
       - POSTGRESQL_PASSWORD=postgres
       - REDIS_URL=redis://redis:6379/1
       - RACK_ENV=production
+      - DOCKER_ENV=true
     volumes:
       - bundle:/usr/local/bundle
     ports:
