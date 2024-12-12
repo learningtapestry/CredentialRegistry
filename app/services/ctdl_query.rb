@@ -221,7 +221,7 @@ class CtdlQuery
 
       ctes = [*subquery_ctes, *union_ctes]
       relation.with(ctes) if ctes.any?
-      relation
+      relation.distinct
     end
   end
 
