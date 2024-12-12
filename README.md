@@ -1,4 +1,4 @@
-# Credential Registry API
+# CLLC-Registry
 
 [![Codeship Status][codeship-badge]][codeship]
 [![Code Climate][codeclimate-badge]][codeclimate]
