@@ -26,6 +26,28 @@ class OCNExporter
     @graph = envelope.processed_resource.fetch('@graph')
   end
 
+  def assessment_cao_ids(property:, resource:, type:)
+    result = EnvelopeResource.connection.execute <<~SQL
+      SELECT DISTINCT envelope_resources.processed_resource
+      FROM indexed_envelope_resources subject
+      INNER JOIN indexed_envelope_resource_references ref1
+      ON subject."@id" = ref1.resource_uri
+      AND ref1.path = 'ceterms:assesses'
+      INNER JOIN indexed_envelope_resource_references ref2
+      ON ref1.subresource_uri = ref2.resource_uri
+      AND ref2.path = 'ceterms:targetNode'
+      INNER JOIN envelope_resources
+      ON subject.envelope_resource_id = envelope_resources.id
+      WHERE envelope_resources.resource_type = 'assessment_profile'
+      AND ref2.subresource_uri = '#{resource.fetch('@id')}'
+      AND envelope_resources.processed_resource->'#{property}' IS NOT NULL
+    SQL
+
+    resources = result.to_a.map { JSON(_1.values.first) }
+    contextualizing_object_resources[type] += resources
+    resources.map { _1.fetch('@id') }
+  end
+
   def cao_ids(property:, resource:, type:)
     caos = resource
       .fetch(property, [])
@@ -80,7 +102,7 @@ class OCNExporter
         'en-us': read_first_value(resource, keys: 'ceasn:competencyText')
       },
       dataURL: resource.fetch('@id'),
-      contextualizedBy: contextualizing_object_ids(resource)
+      contextualizedBy: contextualizing_object_ids(resource).uniq
     }
   end
 
@@ -143,7 +165,7 @@ class OCNExporter
         'en-us': read_first_value(resource, keys: %w[ceterms:targetNodeDescription ceterms:description])
       },
       dataURL: read_first_value(resource, keys: %w[ceterms:targetNode ceterms:subjectWebpage]),
-      codedNotation: resource['ceterms:codedNotation'],
+      codedNotation: read_coded_notation(resource:, type:),
       category: category(resource)
     }
   end
@@ -170,6 +192,30 @@ class OCNExporter
     creds = find_envelope_resources(uris).map(&:processed_resource)
     contextualizing_object_resources['Credential'] += creds
     creds.map { _1.fetch('@id') }
+  end
+
+  def credential_cao_ids(property:, resource:, type:)
+    result = EnvelopeResource.connection.execute <<~SQL
+      SELECT DISTINCT envelope_resources.processed_resource
+      FROM indexed_envelope_resources subject
+      INNER JOIN indexed_envelope_resource_references ref1
+      ON subject."@id" = ref1.resource_uri
+      INNER JOIN indexed_envelope_resource_references ref2
+      ON ref1.subresource_uri = ref2.resource_uri
+      AND ref2.path = 'ceterms:targetCompetency'
+      INNER JOIN indexed_envelope_resource_references ref3
+      ON ref2.subresource_uri = ref3.resource_uri
+      AND ref3.path = 'ceterms:targetNode'
+      INNER JOIN envelope_resources
+      ON subject.envelope_resource_id = envelope_resources.id
+      WHERE envelope_resources.resource_type = 'credential'
+      AND ref3.subresource_uri = '#{resource.fetch('@id')}'
+      AND envelope_resources.processed_resource->'#{property}' IS NOT NULL
+    SQL
+
+    resources = result.to_a.map { JSON(_1.values.first) }
+    contextualizing_object_resources[type] += resources
+    resources.map { _1.fetch('@id') }
   end
 
   def directory
@@ -199,7 +245,15 @@ class OCNExporter
   end
 
   def industry_ids(resource)
-    cao_ids(property: 'ceterms:industryType', resource:, type: 'Industry')
+    property = 'ceterms:industryType'
+    type = 'Industry'
+
+    [
+      *cao_ids(property:, resource:, type:),
+      *assessment_cao_ids(property:, resource:, type:),
+      *credential_cao_ids(property:, resource:, type:),
+      *learning_opportunity_cao_ids(property:, resource:, type:)
+    ].uniq
   end
 
   def json_ld
@@ -234,8 +288,38 @@ class OCNExporter
     resources.map { _1.fetch('@id') }
   end
 
+  def learning_opportunity_cao_ids(property:, resource:, type:)
+    result = EnvelopeResource.connection.execute <<~SQL
+      SELECT DISTINCT envelope_resources.processed_resource
+      FROM indexed_envelope_resources subject
+      INNER JOIN indexed_envelope_resource_references ref1
+      ON subject."@id" = ref1.resource_uri
+      AND ref1.path = 'ceterms:teaches'
+      INNER JOIN indexed_envelope_resource_references ref2
+      ON ref1.subresource_uri = ref2.resource_uri
+      AND ref2.path = 'ceterms:targetNode'
+      INNER JOIN envelope_resources
+      ON subject.envelope_resource_id = envelope_resources.id
+      WHERE envelope_resources.resource_type = 'learning_opportunity_profile'
+      AND ref2.subresource_uri = '#{resource.fetch('@id')}'
+      AND envelope_resources.processed_resource->'#{property}' IS NOT NULL
+    SQL
+
+    resources = result.to_a.map { JSON(_1.values.first) }
+    contextualizing_object_resources[type] += resources
+    resources.map { _1.fetch('@id') }
+  end
+
   def occupation_ids(resource)
-    cao_ids(property: 'ceterms:occupationType', resource:, type: 'Occupation')
+    property = 'ceterms:occupationType'
+    type = 'Occupation'
+
+    [
+      *cao_ids(property:, resource:, type:),
+      *assessment_cao_ids(property:, resource:, type:),
+      *credential_cao_ids(property:, resource:, type:),
+      *learning_opportunity_cao_ids(property:, resource:, type:)
+    ].uniq
   end
 
   def provider
@@ -255,6 +339,14 @@ class OCNExporter
   end
 
   private
+
+  def read_coded_notation(resource:, type:)
+    case type
+    when 'Industry' then resource.dig('ceterms:industryType', 0, 'ceterms:codedNotation')
+    when 'Occupation' then resource.dig('ceterms:occupationType', 0, 'ceterms:codedNotation')
+    else resource['ceterms:codedNotation']
+    end
+  end
 
   def read_first_value(resource, keys:)
     return unless resource.present?
